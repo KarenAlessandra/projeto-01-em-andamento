@@ -1,19 +1,156 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>projeto 01</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#E6DCDB">
+    <title>Karen Alessandra - Resume</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karen Alessandra - Resume</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
-		<header>
-			<h1>Título</h1>
-		</header>
-		
-		<main>
-			<p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
-			<button type="button">btn teste</button>
-		</main>
+		<div id="root"></div>
+		<div class="page" id="page">
+			<header class="header cell">
+				<h1 class="name">Blá blá blá</h1>
+				<div class="controls">
+					<button class="btn" id="lang"       type="button" aria-label="Mudar idioma / Change language">EN</button>
+					<button class="btn" id="theme"      type="button" aria-pressed="false">Escuro</button>
+					<button class="btn" id="drawer-btn" type="button" aria-expanded="false" aria-controls="drawer" data-i18n="menu">Menu</button>
+				</div>
+			</header>
+			
+			<main>
+				<section class="text1-a cell">
+					<h2 data-i18n="t1a-h">Sobre</h2>
+					<p data-i18n="t1a-p">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam et sollicitudin nibh.</p>
+				</section>
+				<section class="text1-b cell">
+					<h2 data-i18n="t1b-h">Abordagem</h2>
+					<p data-i18n="t1b-p">Vivamus tempus dui et auctor tincidunt. Phasellus non gravida lectus.</p>
+				</section>
+				
+				<section class="text2-a cell">
+					<h2 data-i18n="t2a-h">Experiência</h2>
+					<p data-i18n="t2a-p">Quisque elementum velit ut fermentum ullamcorper. Etiam tincidunt tellus ac diam dapibus.</p>
+				</section>
+				<section class="text2-b cell">
+					<h2 data-i18n="t2b-h">Formação</h2>
+					<p data-i18n="t2b-p">Duis blandit libero sed augue blandit fringilla. Nulla nec magna nunc.</p>
+				</section>
+				
+				<section class="scrolly-section">
+					<div id="scrolly-video"></div>
+				</section>
+			</main>
+			
+			<aside class="drawer" id="drawer" aria-label="Menu lateral">
+				<nav>
+					<a href="#" data-i18n="d1">Início</a>
+					<a href="#" data-i18n="d2">Projetos</a>
+					<a href="#" data-i18n="d3">Currículo</a>
+					<a href="#" data-i18n="d4">Contato</a>
+				</nav>
+			</aside>
+
+			<footer class="contacts">
+				<div><h2 data-i18n="c-email">E-mail</h2><a href="mailto:hello@example.com">hello@example.com</a></div>
+				<div><h2 data-i18n="c-phone">Telefone</h2><a href="tel:+5500000000000">+55 00 00000-0000</a></div>
+				<div><h2 data-i18n="c-social">Redes</h2><a href="#">GitHub</a> · <a href="#">LinkedIn</a></div>
+			</footer>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js"></script>
+		<script type="text/javascript">
+			new ScrollyVideo({
+				scrollyVideoContainer: "scrolly-video",
+				src: "sheep.mp4"
+			});
+		</script>
+		<script type="module" src="/src/main.tsx"></script>
+		<script>
+			const root = document.documentElement;
+			const page = document.getElementById('page');
+			
+			const store = {
+				get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+				set(k, v) { try { localStorage.setItem(k, v); } catch {} }
+			};
+			
+			/* ----- Edit your texts here ----- */
+			const dict = {
+				pt: {
+					dark: "Escuro", light: "Claro", menu: "Menu",
+					"t1a-h": "Sobre", "t1a-p": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam et sollicitudin nibh.",
+					"t1b-h": "Abordagem", "t1b-p": "Vivamus tempus dui et auctor tincidunt. Phasellus non gravida lectus.",
+					"t2a-h": "Experiência", "t2a-p": "Quisque elementum velit ut fermentum ullamcorper. Etiam tincidunt tellus ac diam dapibus.",
+					"t2b-h": "Formação", "t2b-p": "Duis blandit libero sed augue blandit fringilla. Nulla nec magna nunc.",
+					d1: "Início", d2: "Projetos", d3: "Currículo", d4: "Contato",
+					"c-email": "E-mail", "c-phone": "Telefone", "c-social": "Redes"
+				},
+				en: {
+					dark: "Dark", light: "Light", menu: "Menu",
+					"t1a-h": "About", "t1a-p": "Short introduction goes here. Who you are and what you do.",
+					"t1b-h": "Approach", "t1b-p": "A few lines about how you work and what you care about.",
+					"t2a-h": "Experience", "t2a-p": "Selected projects, roles or highlights.",
+					"t2b-h": "Education", "t2b-p": "Degrees",
+					d1: "Home", d2: "Projects", d3: "Resume", d4: "Contact",
+					"c-email": "Email", "c-phone": "Phone", "c-social": "Social"
+				}
+			};
+			
+			/* ----- Language ----- */
+			const langBtn = document.getElementById('lang');
+			let lang = 'pt';
+			function setLang(l) {
+				lang = l;
+				root.lang = l === 'pt' ? 'pt-BR' : 'en';
+				document.querySelectorAll('[data-i18n]').forEach(el => {
+					el.textContent = dict[l][el.dataset.i18n];
+				});
+				langBtn.textContent = l === 'pt' ? 'EN' : 'PT';
+				setTheme(root.dataset.theme);   // refreshes the theme button label
+				store.set('lang', l);
+			}
+			langBtn.addEventListener('click', () => setLang(lang === 'pt' ? 'en' : 'pt'));
+			
+			/* ----- Theme ----- */
+			const themeBtn = document.getElementById('theme');
+			function setTheme(t) {
+				root.dataset.theme = t;
+				const dark = t === 'dark';
+				themeBtn.setAttribute('aria-pressed', dark);
+				themeBtn.textContent = dict[lang][dark ? 'light' : 'dark'];
+				store.set('theme', t);
+			}
+			themeBtn.addEventListener('click', () =>
+				setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+			
+			/* ----- Drawer ----- */
+			const drawerBtn = document.getElementById('drawer-btn');
+			drawerBtn.addEventListener('click', () => {
+				const open = page.classList.toggle('drawer-open');
+				drawerBtn.setAttribute('aria-expanded', open);
+			});
+			document.addEventListener('keydown', e => {
+				if (e.key === 'Escape' && page.classList.contains('drawer-open')) drawerBtn.click();
+			});
+			
+			/* ----- Init ----- */
+			const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+			setLang(store.get('lang') || 'pt');
+			setTheme(store.get('theme') || (prefersDark ? 'dark' : 'light'));
+		</script>
 	</body>
-</html>
+</html> -->

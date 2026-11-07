@@ -1,0 +1,288 @@
+* {
+	box-sizing: border-box;
+}
+
+@font-face {
+	font-family: 'Renletter-Regular';
+	src: url('./fonts/Renletter-Regular.otf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}    
+
+:root {
+    --white: #E6DCDB;
+    --red: #88231B;
+    --darkred: #35181A;
+    --beige: #B78464;
+
+    --light: #E6DCDB;
+    --ink: var(--darkred);
+    --line: var(--red);
+    --label: var(--red);
+
+    --muted: #666;
+}
+
+:root[data-theme="dark"] {
+    --white: #121212;
+    --ink: #E6DCDB;
+    --label: var(--beige);
+    --muted: #666;
+}
+/* Only follows the system when the user hasn't chosen a theme yet */
+@media (prefers-color-scheme: dark) {
+	.root:not([data-theme]) {
+		--white: #121212;
+		--ink: #E6DCDB;
+		--label: var(--beige);
+		--muted: #666;
+	}
+}
+
+html, body {
+	margin: 0;
+	min-height: 100%;
+}
+
+body {
+	font-family: 'Renletter-Regular', sans-serif;
+	color: var(--ink);
+	background: var(--white);
+	margin: 0;
+	min-height: 100dvh;
+	transition: background .3s, color .3s;   /* fixed: needs a comma */
+}
+
+/* ---------- Page grid ---------- */
+
+:root {
+    --drawer-w: 0px;
+    --gap: 1.25rem;
+    --pad: clamp(1rem, 2.5vw, 2rem);
+}
+
+.page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--drawer-w);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+
+    grid-template-areas:
+        "header drawer"
+        "main   drawer"
+        "contacts contacts";
+
+    min-height: 100dvh;
+    transition: grid-template-columns .35s ease;
+}
+
+.page.drawer-open {
+    --drawer-w: min(22rem, 40vw);
+}
+
+.header {
+    grid-area: header;
+}
+
+main {
+    grid-area: main;
+    min-width: 0;
+    min-height: 0;
+}
+
+.drawer {
+    grid-area: drawer;
+}
+
+.contacts {
+    grid-area: contacts;
+}
+
+/* ---------- Page slider ---------- */
+
+.slider-container {
+    width: 100%;
+    height: 70vh;
+    min-height: 450px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ---------- 1. Header ---------- */
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--gap);
+}
+
+.name {
+	margin: 0;
+	font-size: clamp(1.5rem, 4vw, 3rem);
+	font-weight: normal;
+	line-height: 1.1;
+}
+
+.controls { display: flex; align-items: center; gap: .5rem; }
+
+.btn {
+	font: inherit;
+	font-size: .9rem;
+	color: var(--ink);
+	background: transparent;
+	border: 1px solid var(--line);
+	padding: .35rem .8rem;
+	cursor: pointer;
+	transition: background .2s, color .2s;
+}
+.btn:hover,
+.btn[aria-pressed="true"],
+.btn[aria-expanded="true"] {
+	background: var(--red);
+	color: var(--light);
+}
+.btn:focus-visible { outline: 2px solid var(--beige); outline-offset: 2px; }
+
+/* ---------- 2 & 3. Text blocks ---------- */
+.cell h2 {
+	margin: 0 0 .75rem;
+	font-size: .85rem;
+	font-weight: normal;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+	color: var(--label);
+}
+.cell p { margin: 0; max-width: 60ch; }
+
+/* ---------- Drawer ---------- */
+
+.drawer {
+    overflow: hidden;
+    background: var(--darkred);
+    color: var(--light);
+    border-left: 1px solid var(--line);
+
+    visibility: hidden;
+    transition: visibility 0s .35s;
+}
+
+.page.drawer-open .drawer {
+    visibility: visible;
+    transition-delay: 0s;
+}
+
+.drawer nav {
+    width: min(22rem, 40vw);
+    padding: var(--pad);
+
+    display: grid;
+    gap: .75rem;
+}
+
+.drawer button {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--beige);
+    padding: .5rem 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.drawer button:hover,
+.drawer button.active {
+    color: var(--beige);
+}
+
+/* ---------- Scrolly video (your original rules) ---------- */
+.scrolly-section {
+	height: 300vh;
+	position: relative;
+	width: 100%;
+	max-width: 700px;
+	justify-self: center;
+}
+
+#scrolly-video {
+	position: sticky;
+	top: 0;
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+}
+
+#scrolly-video video, #scrolly-video canvas {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: contain !important;
+}
+
+@media (min-width: 768px) {
+	#scrolly-video {
+		height: 250vh;
+	}
+}
+
+/* ---------- 4. Contacts (replaces the empty .outro) ---------- */
+.contacts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	gap: var(--gap);
+	padding: var(--pad);
+	border-top: 1px solid var(--line);
+	font-size: .95rem;
+}
+.contacts a { color: inherit; }
+.contacts h2 {
+	margin: 0 0 .25rem;
+	font-size: .8rem;
+	font-weight: normal;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+	color: var(--label);
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 700px) {
+    .page,
+    .page.drawer-open {
+        --drawer-w: 0px;
+
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+
+        grid-template-areas:
+            "header"
+            "main"
+            "contacts";
+    }
+
+    .drawer {
+        position: fixed;
+        inset: 0 0 0 auto;
+
+        width: min(20rem, 85vw);
+        transform: translateX(100%);
+
+        transition:
+            transform .3s ease,
+            visibility 0s .3s;
+
+        z-index: 10;
+    }
+
+    .page.drawer-open .drawer {
+        transform: translateX(0);
+        transition-delay: 0s;
+    }
+
+    .drawer nav {
+        width: 100%;
+    }
+
+    .slider-container {
+        height: 65vh;
+        min-height: 350px;
+    }
+}
