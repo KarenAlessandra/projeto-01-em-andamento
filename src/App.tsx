@@ -1,79 +1,111 @@
+
 import { useEffect, useState } from 'react';
 
-import Header from './components/Header';
+import Header, {
+	type Palette,
+} from './components/Header';
+
 import Drawer from './components/Drawer';
 import PageSlider, { type Page } from './components/PageSlider';
 import Footer from './components/Footer';
 
 type Language = 'pt' | 'en';
-type Theme = 'light' | 'dark';
+
+const availablePalettes: Palette[] = [
+	'original',
+	'forest',
+	'ocean',
+	'lavender',
+	'monochrome',
+];
+
+function getInitialPalette(): Palette {
+	try {
+		const savedPalette = localStorage.getItem('palette');
+
+		if (
+			savedPalette &&
+			availablePalettes.includes(savedPalette as Palette)
+		) {
+			return savedPalette as Palette;
+		}
+	} catch {
+		// localStorage may be unavailable
+	}
+
+	return 'original';
+}
 
 function App() {
-    const [language, setLanguage] = useState<Language>('pt');
-    const [theme, setTheme] = useState<Theme>('light');
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState<Page>('home');
+	const [language, setLanguage] = useState<Language>('pt');
+	const [palette, setPalette] = useState<Palette>(getInitialPalette);
 
-    // Apply language and theme to the document.
-    useEffect(() => {
-        document.documentElement.lang =
-            language === 'pt' ? 'pt-BR' : 'en';
+	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState<Page>('home');
 
-        document.documentElement.dataset.theme = theme;
-    }, [language, theme]);
+	useEffect(() => {
+		document.documentElement.lang =
+			language === 'pt' ? 'pt-BR' : 'en';
 
-    // Close the drawer when the user presses Escape.
-    useEffect(() => {
-        function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === 'Escape') {
-                setIsDrawerOpen(false);
-            }
-        }
+		document.documentElement.dataset.palette = palette;
 
-        document.addEventListener('keydown', handleKeyDown);
+		try {
+			localStorage.setItem('palette', palette);
+		} catch {
+			// continue even if localStorage is unavailable.
+		}
+	}, [language, palette]);
 
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
+	useEffect(() => {
+		function handleKeyDown(event: KeyboardEvent) {
+			if (event.key === 'Escape')
+				setIsDrawerOpen(false);
+		}
 
-    function toggleLanguage() {
-        setLanguage((current) => current === 'pt' ? 'en' : 'pt');
-    }
+		document.addEventListener('keydown', handleKeyDown);
 
-    function toggleTheme() {
-        setTheme((current) => current === 'light' ? 'dark' : 'light');
-    }
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
 
-    function navigateTo(page: Page) {
-        setCurrentPage(page);
-        setIsDrawerOpen(false);
-    }
+	function toggleLanguage() {
+		setLanguage((current) =>
+			current === 'pt' ? 'en' : 'pt'
+		);
+	}
 
-    return (
-        <div className={`page ${isDrawerOpen ? 'drawer-open' : ''}`}>
-            <Header
-                language={language}
-                theme={theme}
-                onLanguageToggle={toggleLanguage}
-                onThemeToggle={toggleTheme}
-                onMenuToggle={() => setIsDrawerOpen((open) => !open)}
-            />
+	function navigateTo(page: Page) {
+		setCurrentPage(page);
+		setIsDrawerOpen(false);
+	}
 
-            <Drawer
-                isOpen={isDrawerOpen}
-                currentPage={currentPage}
-                language={language}
-                onNavigate={navigateTo}
-            />
-
-            <main>
-                <PageSlider currentPage={currentPage} />
-            </main>
-
-            <Footer language={language} />
-        </div>
-    );
+	return (
+		<div className={`page ${isDrawerOpen ? 'drawer-open' : ''}`}>
+			<Header
+				language={language}
+				palette={palette}
+				onLanguageToggle={toggleLanguage}
+				onPaletteChange={setPalette}
+				onMenuToggle={() =>
+					setIsDrawerOpen((open) => !open)
+				}
+			/>
+			
+			<Drawer
+				isOpen={isDrawerOpen}
+				currentPage={currentPage}
+				language={language}
+				onNavigate={navigateTo}
+			/>
+			
+			<main>
+				<PageSlider currentPage={currentPage} />
+			</main>
+			
+			<Footer language={language} />
+		</div>
+	);
 }
 
 export default App;
