@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type Language = 'pt' | 'en';
-
 export type Palette =
 	| 'original'
 	| 'forest'
@@ -12,6 +11,7 @@ export type Palette =
 interface HeaderProps {
 	language: Language;
 	palette: Palette;
+	isDrawerOpen: boolean;
 	onLanguageToggle: () => void;
 	onPaletteChange: (palette: Palette) => void;
 	onMenuToggle: () => void;
@@ -52,11 +52,32 @@ const palettes: {
 function Header({
 	language,
 	palette,
+	isDrawerOpen,
 	onLanguageToggle,
 	onPaletteChange,
 	onMenuToggle,
 }: HeaderProps) {
 	const [paletteOpen, setPaletteOpen] = useState(false);
+	const paletteRef = useRef<HTMLDivElement>(null);
+	
+	useEffect(() => {
+		if (!paletteOpen) return;
+		
+		function handlePointerDown(event: PointerEvent) {
+			if (
+				paletteRef.current &&
+				!paletteRef.current.contains(event.target as Node)
+			) {
+				setPaletteOpen(false);
+			}
+		}
+		
+		document.addEventListener('pointerdown', handlePointerDown);
+		
+		return () => {
+			document.removeEventListener('pointerdown', handlePointerDown);
+		};
+	}, [paletteOpen]);
 	
 	const labels = {
 		pt: {
@@ -75,15 +96,20 @@ function Header({
 	
 	function selectPalette(selectedPalette: Palette) {
 		onPaletteChange(selectedPalette);
-		setPaletteOpen(false);
 	}
-
+	
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Escape') setPaletteOpen(false);
+	}
+	document.addEventListener('keydown',    handleKeyDown);
+	document.removeEventListener('keydown', handleKeyDown);
+	
 	return (
 		<header className="header cell">
-			<h1 className="name">Karen Alessandra</h1>
+			<h1 className="name brick">Título</h1>
 			<div className="controls">
 				<button
-					className="btn"
+					className="btn brick"
 					type="button"
 					onClick={onLanguageToggle}
 					aria-label="Change language"
@@ -91,9 +117,9 @@ function Header({
 					{language === 'pt' ? 'EN' : 'PT'}
 				</button>
 				
-				<div className="palette-control">
+				<div className="palette-control"  ref={paletteRef}>
 					<button
-						className="btn palette-trigger"
+						className="btn palette-trigger brick"
 						type="button"
 						onClick={() => setPaletteOpen((open) => !open)}
 						aria-expanded={paletteOpen}
@@ -108,7 +134,7 @@ function Header({
 						/>
 						{text.colors}
 					</button>
-					
+					<div className="palette-control" ref={paletteRef}></div>
 					{paletteOpen && (
 						<div className="palette-options" id="palette-options">
 							<p>{text.choose}</p>
@@ -129,7 +155,14 @@ function Header({
 					)}
 				</div>
 				
-				<button className="btn" type="button" onClick={onMenuToggle}>
+				<button
+					className={`btn brick ${isDrawerOpen ? 'btn-hidden' : ''}`}
+					type="button"
+					onClick={onMenuToggle}
+					aria-expanded={isDrawerOpen}
+					aria-hidden={isDrawerOpen}
+					tabIndex={isDrawerOpen ? -1 : 0}
+				>
 					{text.menu}
 				</button>
 			</div>

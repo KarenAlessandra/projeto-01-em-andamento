@@ -5,15 +5,17 @@ import '@rcaferati/react-awesome-slider/custom-animations/cube-animation.css';
 import '@rcaferati/react-awesome-slider/custom-animations/scale-out-animation.css';
 import '@rcaferati/react-awesome-slider/custom-animations/fall-animation.css';
 
-import Home from '../pages/Home';
+import Home, { HomeGame } from '../pages/Home';
 import Skills from '../pages/Skills';
 import Experience from '../pages/Experience';
 import Contact from '../pages/Contact';
 
 export type Page = 'home' | 'skills' | 'experience' | 'contact';
+export type Language = 'pt'| 'en';
 
 interface PageSliderProps {
 	currentPage: Page;
+	language: Language;
 }
 
 const pageIndexes: Record<Page, number> = {
@@ -30,12 +32,13 @@ const pageAnimations: Record<Page, string | undefined> = {
 	contact: 'fallAnimation',
 };
 
-function PageSlider({ currentPage }: PageSliderProps) {
+
+function PageSlider({ currentPage, language }: PageSliderProps) {
 	return (
 		<div className="slider-container">
 			<AwesomeSlider selected={pageIndexes[currentPage]} animation={pageAnimations[currentPage]} buttons={false} bullets={false} fillParent>
 				<div>
-					<Home />
+					<Home language={language} />
 				</div>
 				<div>
 					<Skills />
@@ -47,6 +50,8 @@ function PageSlider({ currentPage }: PageSliderProps) {
 					<Contact />
 				</div>
 			</AwesomeSlider>
+			
+			<HomeGame active={currentPage === 'home'} language={language} />
 		</div>
 	);
 }
