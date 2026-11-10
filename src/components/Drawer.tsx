@@ -1,4 +1,3 @@
-
 import type { Page } from './PageSlider';
 
 type Language = 'pt' | 'en';
