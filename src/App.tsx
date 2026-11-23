@@ -2,49 +2,42 @@ import { useEffect, useState } from 'react';
 
 import IntroScreen from './components/Intro';
 import Header, { type Palette } from './components/Header';
-import Drawer from './components/Drawer';
-import PageSlider, { type Page } from './components/PageSlider';
+import SectionNavigation from './components/SectionNavigation';
 import Footer from './components/Footer';
+
+import Home from './pages/Home';
+import Formation from './pages/Formation';
+import Skills from './pages/Skills';
+import Experience from './pages/Experience';
 
 type Language = 'pt' | 'en';
 
 const availablePalettes: Palette[] = [
-	'original',
-	'forest',
-	'ocean',
-	'lavender',
-	'monochrome',
+	'sunset',
+	'candy',
+	'garden',
+	'sunshine',
+	'midnight',
 ];
 
 function getInitialPalette(): Palette {
 	try {
 		const savedPalette = localStorage.getItem('palette');
 		
-		if (
-			savedPalette &&
-			availablePalettes.includes(savedPalette as Palette)
-		) {
+		if (savedPalette && availablePalettes.includes(savedPalette as Palette)) {
 			return savedPalette as Palette;
 		}
 	} catch {
 		// localStorage may be unavailable.
 	}
 	
-	return 'original';
-}
-
-if ('scrollRestoration' in history) {
-	history.scrollRestoration = 'manual';
+	return 'sunset';
 }
 
 function App() {
 	const [hasEntered, setHasEntered] = useState(false);
-	
 	const [language, setLanguage] = useState<Language>('pt');
 	const [palette, setPalette] = useState<Palette>(getInitialPalette);
-	
-	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-	const [currentPage, setCurrentPage] = useState<Page>('home');
 	
 	useEffect(() => {
 		document.documentElement.lang =
@@ -55,67 +48,34 @@ function App() {
 		try {
 			localStorage.setItem('palette', palette);
 		} catch {
-			// continue even if localStorage is unavailable.
+			// Continue even if localStorage is unavailable.
 		}
 	}, [language, palette]);
 	
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, [hasEntered]);
-	
-	useEffect(() => {
-		function handleKeyDown(event: KeyboardEvent) {
-			if (event.key === 'Escape') {
-				setIsDrawerOpen(false);
-			}
-		}
-		
-		document.addEventListener('keydown', handleKeyDown);
-		
-		return () => {
-			document.removeEventListener('keydown', handleKeyDown);
-		};
-	}, []);
-	
 	function toggleLanguage() {
-		setLanguage((current) =>
-			current === 'pt' ? 'en' : 'pt'
-		);
+		setLanguage((current) => current === 'pt' ? 'en' : 'pt');
 	}
-	
-	function navigateTo(page: Page) {
-		setCurrentPage(page);
-		setIsDrawerOpen(false);
-	}
-	
 	return (
 		<>
 			{!hasEntered && (
-				<IntroScreen onEnter={() => setHasEntered(true)} />
+				<IntroScreen onEnter={() => setHasEntered(true)} language={language}/>
 			)}
-			
-			<div className={`page ${isDrawerOpen ? 'drawer-open' : ''}`}>
+			<div className="page">
 				<Header
 					language={language}
 					palette={palette}
-					isDrawerOpen={isDrawerOpen}
+					isDrawerOpen={false}
 					onLanguageToggle={toggleLanguage}
 					onPaletteChange={setPalette}
-					onMenuToggle={() => setIsDrawerOpen((open) => !open)}
+					onMenuToggle={() => {}}
 				/>
-				
-				<Drawer
-					isOpen={isDrawerOpen}
-					currentPage={currentPage}
-					language={language}
-					onNavigate={navigateTo}
-					onClose={() => setIsDrawerOpen(false)}
-				/>
-				
+				<SectionNavigation language={language} />
 				<main>
-					<PageSlider currentPage={currentPage} language={language} />
+					<Home       language={language} />
+					<Formation  language={language} />
+					<Skills     language={language} />
+					<Experience language={language} />
 				</main>
-				
 				<Footer language={language} />
 			</div>
 		</>

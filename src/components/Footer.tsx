@@ -16,8 +16,8 @@ function Footer({ language }: FooterProps) {
 	
 	const text = labels[language];
 	
-	return (
-		<footer className="contacts">
+	return(
+		<footer className="contact">
 			<div>
 				<h2>{text.email}</h2>
 				<a href="mailto:

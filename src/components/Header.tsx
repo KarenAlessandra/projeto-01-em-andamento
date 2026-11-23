@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
 export type Language = 'pt' | 'en';
+
 export type Palette =
-	| 'original'
-	| 'forest'
-	| 'ocean'
-	| 'lavender'
-	| 'monochrome';
+	| 'sunset'
+	| 'candy'
+	| 'garden'
+	| 'sunshine'
+	| 'midnight';
 
 interface HeaderProps {
 	language: Language;
@@ -23,31 +24,54 @@ const palettes: {
 	color: string;
 }[] = [
 	{
-		id: 'original',
-		name: { pt: 'Original', en: 'Original' },
-		color: '#88231B',
+		id: 'sunset',
+		name: { pt: 'Sunset', en: 'Sunset' },
+		color: '#E9738B',
 	},
 	{
-		id: 'forest',
-		name: { pt: 'Floresta', en: 'Forest' },
-		color: '#65745A',
+		id: 'candy',
+		name: { pt: 'Candy', en: 'Candy' },
+		color: '#D655A8',
 	},
 	{
-		id: 'ocean',
-		name: { pt: 'Oceano', en: 'Ocean' },
-		color: '#315B75',
+		id: 'garden',
+		name: { pt: 'Garden', en: 'Garden' },
+		color: '#89C5A3',
 	},
 	{
-		id: 'lavender',
-		name: { pt: 'Lavanda', en: 'Lavender' },
-		color: '#9575A5',
+		id: 'sunshine',
+		name: { pt: 'Sunshine', en: 'Sunshine' },
+		color: '#FBCB64',
 	},
 	{
-		id: 'monochrome',
-		name: { pt: 'Monocromático', en: 'Monochrome' },
-		color: '#555555',
+		id: 'midnight',
+		name: { pt: 'Midnight', en: 'Midnight' },
+		color: '#663EB1',
 	},
 ];
+
+function RollingText({ text }: { text: string }) {
+	return (
+		<span className="header-name-text" aria-hidden="true">
+			{Array.from(text).map((letter, index) => {
+				const character = letter === ' ' ? '\u00A0' : letter;
+				return (
+					<span className="header-letter" key={index}>
+						<span
+							className="header-letter-stack"
+							style={{
+								animationDelay: `${index * 45}ms`,
+							}}
+						>
+							<span>{character}</span>
+							<span>{character}</span>
+						</span>
+					</span>
+				);
+			})}
+		</span>
+	);
+}
 
 function Header({
 	language,
@@ -58,6 +82,7 @@ function Header({
 	onMenuToggle,
 }: HeaderProps) {
 	const [paletteOpen, setPaletteOpen] = useState(false);
+	
 	const paletteRef = useRef<HTMLDivElement>(null);
 	
 	useEffect(() => {
@@ -79,6 +104,19 @@ function Header({
 		};
 	}, [paletteOpen]);
 	
+	useEffect(() => {
+		function handleKeyDown(event: KeyboardEvent) {
+			if (event.key === 'Escape')
+				setPaletteOpen(false);
+		}
+		
+		document.addEventListener('keydown', handleKeyDown);
+		
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
+	
 	const labels = {
 		pt: {
 			menu: 'Menu',
@@ -96,17 +134,14 @@ function Header({
 	
 	function selectPalette(selectedPalette: Palette) {
 		onPaletteChange(selectedPalette);
+		setPaletteOpen(false);
 	}
-	
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Escape') setPaletteOpen(false);
-	}
-	document.addEventListener('keydown',    handleKeyDown);
-	document.removeEventListener('keydown', handleKeyDown);
 	
 	return (
 		<header className="header cell">
-			<h1 className="name brick">Título</h1>
+			<h1 className="name brick">
+				<RollingText text="Karen Alessandra" />
+			</h1>
 			<div className="controls">
 				<button
 					className="btn brick"
@@ -116,8 +151,7 @@ function Header({
 				>
 					{language === 'pt' ? 'EN' : 'PT'}
 				</button>
-				
-				<div className="palette-control"  ref={paletteRef}>
+				<div className="palette-control" ref={paletteRef}>
 					<button
 						className="btn palette-trigger brick"
 						type="button"
@@ -128,22 +162,23 @@ function Header({
 						<span
 							className="current-color"
 							style={{
-								backgroundColor:
-									palettes.find((item) => item.id === palette)?.color,
+								backgroundColor: palettes.find(
+									(item) => item.id === palette
+								)?.color,
 							}}
 						/>
 						{text.colors}
 					</button>
-					<div className="palette-control" ref={paletteRef}></div>
 					{paletteOpen && (
 						<div className="palette-options" id="palette-options">
 							<p>{text.choose}</p>
-							
 							{palettes.map((item) => (
 								<button
 									key={item.id}
 									type="button"
-									className={`palette-option ${palette === item.id ? 'selected' : ''}`}
+									className={`palette-option ${
+										palette === item.id ? 'selected' : ''
+									}`}
 									onClick={() => selectPalette(item.id)}
 									aria-pressed={palette === item.id}
 								>
@@ -154,9 +189,8 @@ function Header({
 						</div>
 					)}
 				</div>
-				
 				<button
-					className={`btn brick ${isDrawerOpen ? 'btn-hidden' : ''}`}
+					className={`btn brick ${ isDrawerOpen ? 'btn-hidden' : '' }`}
 					type="button"
 					onClick={onMenuToggle}
 					aria-expanded={isDrawerOpen}

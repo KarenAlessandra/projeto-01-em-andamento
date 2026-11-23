@@ -5,52 +5,48 @@ type Language = 'pt' | 'en';
 
 const content = {
 	pt: {
-		title: 'Início',
-		welcome: 'Bem-vindo',
+		play:    'Jogar Breakout',
 		paragraphs: [
 			'Oi, meu nome é Karen Alessandra, desenvolvedora full-stack formada em Análise e Desenvolvimento de Sistemas pela UTFPR.',
 			'Crio interfaces com HTML, CSS e JavaScript, trabalho com PHP e SQL no backend e valido APIs REST no Postman. Também já desenvolvi sites e aplicativos Android com Flutter.',
 			'Fique à vontade para explorar e, se quiser, aperte o botãozinho no canto para quebrar a página.',
 		],
-		play: 'Jogar Breakout',
 	},
 	en: {
-		title: 'Home',
-		welcome: 'Welcome',
+		play:    'Play Breakout',
 		paragraphs: [
 			"Hi, I'm Karen Alessandra, a full-stack developer with a degree in Systems Analysis and Development from UTFPR.",
 			'I build interfaces with HTML, CSS and JavaScript, work with PHP and SQL on the back end, and validate REST APIs in Postman. I have also built websites and Android apps with Flutter.',
 			'Take a look around, and feel free to press the little button in the corner and break the page.',
 		],
-		play: 'Play Breakout',
 	},
 };
 
 const gameText = {
 	pt: {
-		lives: 'Vidas',
+		lives:     'Vidas',
 		wordsLeft: 'Palavras restantes',
-		won: 'Você limpou a página!',
-		lost: 'Fim de jogo',
+		won:       'Você limpou a página!',
+		lost:      'Fim de jogo',
 		playAgain: 'Clique para jogar de novo',
-		tryAgain: 'Clique para tentar de novo',
-		launch: 'Clique, toque ou aperte Espaço para lançar',
-		exit: 'Sair',
+		tryAgain:  'Clique para tentar de novo',
+		launch:    'Clique, toque ou aperte Espaço para lançar',
+		exit:      'Sair',
 	},
 	en: {
-		lives: 'Lives',
+		lives:     'Lives',
 		wordsLeft: 'Words left',
-		won: 'You cleared the page!',
-		lost: 'Game over',
+		won:       'You cleared the page!',
+		lost:      'Game over',
 		playAgain: 'Click to play again',
-		tryAgain: 'Click to try again',
-		launch: 'Click, tap or press Space to launch',
-		exit: 'Exit',
+		tryAgain:  'Click to try again',
+		launch:    'Click, tap or press Space to launch',
+		exit:      'Exit',
 	},
 };
 
 function Words({ text }: { text: string }) {
-	return (
+	return(
 		<>
 			{text.split(' ').map((word, i) => (
 				<Fragment key={i}>
@@ -62,22 +58,21 @@ function Words({ text }: { text: string }) {
 }
 
 type Brick = {
-	el: HTMLElement;
-	left: number;
-	top: number;
-	right: number;
+	el:     HTMLElement;
+	left:   number;
+	top:    number;
+	right:  number;
 	bottom: number;
 	broken: boolean;
 };
 
-const clamp = (v: number, min: number, max: number) =>
-	Math.min(Math.max(v, min), max);
+const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 
 function getBackground(el: HTMLElement | null): string {
 	let node = el;
-	while (node) {
+	while(node) {
 		const c = getComputedStyle(node).backgroundColor;
-		if (c && c !== 'transparent' && c !== 'rgba(0, 0, 0, 0)') return c;
+		if(c && c !== 'transparent' && c !== 'rgba(0, 0, 0, 0)') return c;
 		node = node.parentElement;
 	}
 	return '#fff';
@@ -97,7 +92,7 @@ function Breakout({
 		const root = document.querySelector<HTMLElement>('.home');
 		const canvas = canvasRef.current;
 		const ctx = canvas?.getContext('2d');
-		if (!root || !canvas || !ctx) return;
+		if(!root || !canvas || !ctx) return;
 		
 		const previousOverflow = document.body.style.overflow;
 		document.body.style.overflow = 'hidden';
@@ -166,7 +161,7 @@ function Breakout({
 		}
 		
 		function launch() {
-			if (ball.launched || state !== 'playing') return;
+			if(ball.launched || state !== 'playing') return;
 			const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.8;
 			ball.vx = Math.cos(angle) * speed;
 			ball.vy = Math.sin(angle) * speed;
@@ -191,20 +186,20 @@ function Breakout({
 			ball.y += ball.vy * h;
 			
 			// walls
-			if (ball.x - ball.r < 0) {
+			if(ball.x - ball.r < 0) {
 				ball.x = ball.r;
 				ball.vx = Math.abs(ball.vx);
-			} else if (ball.x + ball.r > W) {
+			} else if(ball.x + ball.r > W) {
 				ball.x = W - ball.r;
 				ball.vx = -Math.abs(ball.vx);
 			}
-			if (ball.y - ball.r < 0) {
+			if(ball.y - ball.r < 0) {
 				ball.y = ball.r;
 				ball.vy = Math.abs(ball.vy);
 			}
 			
 			// paddle
-			if (
+			if(
 				ball.vy > 0 &&
 				ball.y + ball.r >= paddle.y &&
 				ball.y - ball.r <= paddle.y + paddle.h &&
@@ -225,21 +220,21 @@ function Breakout({
 			// words
 			let hit: Brick | null = null;
 			let best = 0;
-			for (const b of bricks) {
-				if (b.broken) continue;
+			for(const b of bricks) {
+				if(b.broken) continue;
 				const cx = clamp(ball.x, b.left, b.right);
 				const cy = clamp(ball.y, b.top, b.bottom);
 				const dx = ball.x - cx;
 				const dy = ball.y - cy;
-				if (dx * dx + dy * dy > ball.r * ball.r) continue;
+				if(dx * dx + dy * dy > ball.r * ball.r) continue;
 				const overlap = ball.r - Math.hypot(dx, dy);
-				if (overlap > best) {
+				if(overlap > best) {
 					best = overlap;
 					hit = b;
 				}
 			}
 			
-			if (hit) {
+			if(hit) {
 				hit.broken = true;
 				hit.el.style.opacity = '0';
 				hit.el.style.transform = 'scale(0.6)';
@@ -251,15 +246,15 @@ function Breakout({
 				const penTop = ball.y + ball.r - hit.top;
 				const penBottom = hit.bottom - (ball.y - ball.r);
 				
-				if (Math.min(penLeft, penRight) < Math.min(penTop, penBottom)) {
-					if (penLeft < penRight) {
+				if(Math.min(penLeft, penRight) < Math.min(penTop, penBottom)) {
+					if(penLeft < penRight) {
 						ball.vx = -Math.abs(ball.vx);
 						ball.x = hit.left - ball.r;
 					} else {
 						ball.vx = Math.abs(ball.vx);
 						ball.x = hit.right + ball.r;
 					}
-				} else if (penTop < penBottom) {
+				} else if(penTop < penBottom) {
 					ball.vy = -Math.abs(ball.vy);
 					ball.y = hit.top - ball.r;
 				} else {
@@ -273,12 +268,12 @@ function Breakout({
 				ball.vy = (ball.vy / m) * speed;
 			}
 			
-			if (bricks.every((b) => b.broken)) state = 'won';
+			if(bricks.every((b) => b.broken)) state = 'won';
 			
 			// bottom
-			if (ball.y - ball.r > H) {
+			if(ball.y - ball.r > H) {
 				lives -= 1;
-				if (lives <= 0) state = 'lost';
+				if(lives <= 0) state = 'lost';
 				else resetBall();
 			}
 		}
@@ -290,7 +285,7 @@ function Breakout({
 				W - paddle.w
 			);
 			
-			if (!ball.launched) {
+			if(!ball.launched) {
 				ball.x = paddle.x + paddle.w / 2;
 				ball.y = paddle.y - ball.r - 1;
 				return;
@@ -299,7 +294,7 @@ function Breakout({
 			// move in small sub-steps (max ~3px each) so the ball can't skip into a word
 			const steps = Math.max(1, Math.ceil((speed * dt) / 3));
 			const h = dt / steps;
-			for (let i = 0; i < steps && state === 'playing' && ball.launched; i++)
+			for(let i = 0; i < steps && state === 'playing' && ball.launched; i++)
 				stepBall(h);
 		}
 		
@@ -387,7 +382,7 @@ function Breakout({
 			const title = '600 22px system-ui, sans-serif';
 			const small = '14px system-ui, sans-serif';
 			
-			if (state === 'won') {
+			if(state === 'won') {
 				drawCard(
 					[
 						{ text: `🎉 ${t.won}`, font: title },
@@ -396,7 +391,7 @@ function Breakout({
 					W / 2,
 					H / 2
 				);
-			} else if (state === 'lost') {
+			} else if(state === 'lost') {
 				drawCard(
 					[
 						{ text: t.lost, font: title },
@@ -405,7 +400,7 @@ function Breakout({
 					W / 2,
 					H / 2
 				);
-			} else if (!ball.launched) {
+			} else if(!ball.launched) {
 				drawCard([{ text: t.launch, font: small }], W / 2, paddle.y - 50);
 			}
 		}
@@ -413,8 +408,8 @@ function Breakout({
 		function frame(now: number) {
 			const dt = Math.min((now - last) / 1000, 0.032);
 			last = now;
-			if (++frameCount % 30 === 0) collectBricks();
-			if (state === 'playing') update(dt);
+			if(++frameCount % 30 === 0) collectBricks();
+			if(state === 'playing') update(dt);
 			draw();
 			raf = requestAnimationFrame(frame);
 		}
@@ -425,24 +420,24 @@ function Breakout({
 		
 		function onPointerDown(e: PointerEvent) {
 			paddle.x = clamp(e.clientX - paddle.w / 2, 0, W - paddle.w);
-			if (state !== 'playing') restart();
+			if(state !== 'playing') restart();
 			else launch();
 		}
 		
 		function onKeyDown(e: KeyboardEvent) {
-			if (e.key === 'Escape') onExit();
-			else if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
-			else if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
-			else if (e.key === ' ' || e.key === 'Enter') {
+			if(e.key === 'Escape') onExit();
+			else if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+			else if(e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+			else if(e.key === ' ' || e.key === 'Enter') {
 				e.preventDefault();
-				if (state !== 'playing') restart();
+				if(state !== 'playing') restart();
 				else launch();
 			}
 		}
 		
 		function onKeyUp(e: KeyboardEvent) {
-			if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
-			if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+			if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+			if(e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
 		}
 		
 		measure();
@@ -456,7 +451,7 @@ function Breakout({
 		window.addEventListener('resize', measure);
 		raf = requestAnimationFrame(frame);
 		
-		return () => {
+		return() => {
 			cancelAnimationFrame(raf);
 			canvas.removeEventListener('pointermove', onPointerMove);
 			canvas.removeEventListener('pointerdown', onPointerDown);
@@ -475,7 +470,7 @@ function Breakout({
 		};
 	}, [language, onExit]);
 	
-	return (
+	return(
 		<>
 			<canvas ref={canvasRef} className="breakout-canvas" />
 			<button className="breakout-exit" onClick={onExit}>
@@ -488,10 +483,8 @@ function Breakout({
 function Home({ language }: { language: Language }) {
 	const text = content[language];
 	
-	return (
-		<section className="home">
-			<h2 className="brick">{text.title}</h2>
-			<p><Words text={text.welcome} /></p>
+	return(
+		<section className="home-section">
 			{text.paragraphs.map((paragraph, i) => (
 				<p key={i}><Words text={paragraph} /></p>
 			))}
@@ -503,10 +496,10 @@ export function HomeGame({ active, language }: { active: boolean; language: Lang
 	const [playing, setPlaying] = useState(false);
 	
 	useEffect(() => {
-		if (!active) setPlaying(false);
+		if(!active) setPlaying(false);
 	}, [active]);
 	
-	if (!active) return null;
+	if(!active) return null;
 	
 	return createPortal(
 		playing ? (
